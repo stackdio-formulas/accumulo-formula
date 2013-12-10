@@ -4,10 +4,7 @@ root_path: accumulo
 components:
   - title: Accumulo Master
     description: Accumulo Server
-    sls_path: accumulo.master
-  - title: Accumulo Slave
-    description: Accumulo Server
-    sls_path: accumulo.slave
+    sls_path: accumulo.server
 pillar_defaults:
   accumulo:
     version: 1.5.0
