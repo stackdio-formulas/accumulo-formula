@@ -15,7 +15,7 @@ pillar_defaults:
       source_hash: sha1=c2bacfd8abeb60d50d87820a4b9fabed92078370
 
     config:
-      - accumulo-site:
+      accumulo-site:
         trace.user:
           value: root
         crypto.module.class:
@@ -34,7 +34,7 @@ pillar_defaults:
           value: org.apache.accumulo.core.security.crypto.CachingHDFSSecretKeyEncryptionStrategy
         crypto.default.key.strategy.cipher.suite:
           value: AES/ECB/NoPadding
-      - accumulo-site-profiles:
+      accumulo-site-profiles:
         512MB:
           tserver.memory.maps.max:
             value: 80M
