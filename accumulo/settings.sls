@@ -17,9 +17,13 @@
 {%- set real_home = alt_home + '-' + version %}
 {%- set real_config_src = real_home + '/conf' %}
 {%- set real_config_dist = alt_config + '.dist' %}
-{%- set java_home = salt['pillar.get']('java_home', '/usr/lib/java') %}
+{%- set java_home = salt['pillar.get']('accumulo:config:accumulo-env:java_home', '/usr/lib/java') %}
 
-{%- set zookeeper_prefix  = salt['pillar.get']('zookeeper:prefix', '/usr/lib/zookeeper') %}
+{%- set hadoop_prefix  = salt['pillar.get']('accumulo:config:hadoop:prefix', '/usr/lib/hadoop') %}
+{%- set hadoop_config  = salt['pillar.get']('accumulo:config:hadoop:config', '/etc/hadoop/conf') %}
+{%- set hadoop_major_version = salt['pillar.get']('accumulo:config:hadoop:major_version', '2') %}
+{%- set hadoop_classpaths = salt['pillar.get']('accumulo:config:hadoop:classpaths', []) %}
+{%- set zookeeper_prefix  = salt['pillar.get']('accumulo:zookeeper:prefix', '/usr/lib/zookeeper') %}
 {%- set accumulo_default_loglevel = 'WARN' %}
 {%- set accumulo_loglevels = ['DEBUG', 'INFO', 'WARN', 'ERROR'] %}
 {%- set accumulo_ll = salt['pillar.get']('accumulo:config:loglevel', accumulo_default_loglevel) %}
@@ -33,10 +37,10 @@
 {%- set accumulo_profile_dict = salt['pillar.get']('accumulo:config:accumulo-site-profiles:' + accumulo_profile, None) %}
 
 # TODO:
-{%- set namenode_host = salt['mine.get']('roles:hadoop_master', 'network.interfaces', 'grain').keys()|first() %}
+{%- set namenode_host = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:cdh4.hadoop.namenode', 'grains.get', 'fqdn', 'compound').values()|first() %}
 {%- set zookeeper_host = namenode_host %}
-{%- set accumulo_master = salt['mine.get']('roles:accumulo_master', 'network.interfaces', 'grain').keys()|first() %}
-{%- set accumulo_slaves = salt['mine.get']('roles:accumulo_slave', 'network.interfaces', 'grain').keys() %}
+{%- set accumulo_master = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.server', 'grains.get', 'fqdn', 'compound').values()|first() %}
+{%- set accumulo_slaves = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.slave', 'grains.get', 'fqdn', 'compound').values() %}
 
 {%- set accumulo = {} %}
 {%- do accumulo.update( { 'uid': uid,
@@ -55,6 +59,10 @@
                           'real_config_src' : real_config_src,
                           'real_config_dist' : real_config_dist,
                           'java_home' : java_home,
+                          'hadoop_prefix': hadoop_prefix,
+                          'hadoop_config': hadoop_config,
+                          'hadoop_major_version': hadoop_major_version,
+                          'hadoop_classpaths': hadoop_classpaths,
                           'zookeeper_prefix' : zookeeper_prefix,
                           'namenode_host' : namenode_host,
                           'zookeeper_host' : zookeeper_host,

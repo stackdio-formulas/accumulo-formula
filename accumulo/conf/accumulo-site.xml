@@ -78,7 +78,11 @@
     <name>general.classpaths</name>
     <value>
         <!-- {{ hadoop_major }} -->
-{%- if hadoop_major != '1' %}
+{%- if hadoop_classpaths %}
+    {% for cp in hadoop_classpaths %}
+      {{ cp }},
+    {% endfor %}
+{%- elif hadoop_major != '1' %}
       $HADOOP_PREFIX/share/hadoop/common/.*.jar,
       $HADOOP_PREFIX/share/hadoop/common/lib/.*.jar,
       $HADOOP_PREFIX/share/hadoop/hdfs/.*.jar,

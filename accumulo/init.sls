@@ -1,7 +1,3 @@
-include:
-  - hadoop
-  - hadoop.snappy
-
 {%- if grains['os_family'] in ['RedHat'] %}
 redhat-lsb-core:
   pkg.installed
@@ -19,7 +15,7 @@ accumulo:
     - home: {{ accumulo.userhome }}
     - groups: ['hadoop']
     - require:
-      - group: hadoop
+      #- group: hadoop
       - group: accumulo
   file.directory:
     - user: accumulo
@@ -38,32 +34,32 @@ accumulo:
       - user: accumulo
       - group: accumulo
 
-accumulo_private_key:
-  file.managed:
-    - name: {{ accumulo.userhome }}/.ssh/id_dsa
-    - user: accumulo
-    - group: accumulo
-    - mode: 600
-    - source: salt://accumulo/files/dsa-accumulo
-    - require:
-      - file.directory: {{ accumulo.userhome }}/.ssh
+#accumulo_private_key:
+#  file.managed:
+#    - name: {{ accumulo.userhome }}/.ssh/id_dsa
+#    - user: accumulo
+#    - group: accumulo
+#    - mode: 600
+#    - source: salt://accumulo/files/dsa-accumulo
+#    - require:
+#      - file.directory: {{ accumulo.userhome }}/.ssh
 
-accumulo_public_key:
-  file.managed:
-    - name: {{ accumulo.userhome }}/.ssh/id_dsa.pub
-    - user: accumulo
-    - group: accumulo
-    - mode: 644
-    - source: salt://accumulo/files/dsa-accumulo.pub
-    - require:
-      - file.managed: accumulo_private_key
+#accumulo_public_key:
+#  file.managed:
+#    - name: {{ accumulo.userhome }}/.ssh/id_dsa.pub
+#    - user: accumulo
+#    - group: accumulo
+#    - mode: 644
+#    - source: salt://accumulo/files/dsa-accumulo.pub
+#    - require:
+#      - file.managed: accumulo_private_key
 
-ssh_dss_accumulo:
-  ssh_auth.present:
-    - user: accumulo
-    - source: salt://accumulo/files/dsa-accumulo.pub
-    - require:
-      - file.managed: accumulo_private_key
+#ssh_dss_accumulo:
+#  ssh_auth.present:
+#    - user: accumulo
+#    - source: salt://accumulo/files/dsa-accumulo.pub
+#    - require:
+#      - file.managed: accumulo_private_key
 
 {{ accumulo.userhome }}/.ssh/config:
   file.managed:
@@ -102,3 +98,59 @@ accumulo-home-link:
     - recurse:
       - user
       - group
+
+/etc/accumulo:
+  file.directory:
+    - owner: root
+    - group: root
+    - mode: 755
+
+{{ accumulo.real_config }}:
+  file.recurse:
+    - source: salt://accumulo/conf
+    - template: jinja
+    - file_mode: 644
+    - user: root
+    - group: root
+    - context:
+      prefix: {{ accumulo.prefix }}
+      java_home: {{ accumulo.java_home }}
+      hadoop_prefix: {{ accumulo.hadoop_prefix }}
+      hadoop_config: {{ accumulo.hadoop_config }}
+      hadoop_classpaths: {{ accumulo.hadoop_classpaths }}
+      alt_config: {{ accumulo.alt_config }}
+      zookeeper_prefix: {{ accumulo.zookeeper_prefix }}
+      accumulo_logs: '/var/log/accumulo'
+      namenode_host: {{ accumulo.namenode_host }}
+      zookeeper_host: {{ accumulo.zookeeper_host }}
+      hadoop_major: {{ accumulo.hadoop_major_version }}
+      accumulo_master: {{ accumulo.accumulo_master }}
+      accumulo_slaves: {{ accumulo.accumulo_slaves }}
+      accumulo_default_profile: {{ accumulo.accumulo_default_profile }}
+      accumulo_profile: {{ accumulo.accumulo_profile }}
+      accumulo_loglevel: {{ accumulo.accumulo_loglevel }}
+      secret: {{ accumulo.secret }}
+
+move-accumulo-dist-conf:
+  cmd.run:
+    - name: mv  {{ accumulo.real_config_src }} {{ accumulo.real_config_dist }}
+    - unless: test -L {{ accumulo.real_config_src }}
+    - onlyif: test -d {{ accumulo.real_config_src }}
+    - require:
+      - file.directory: {{ accumulo.real_home }}
+      - file.directory: /etc/accumulo
+
+{{ accumulo.real_config_src }}:
+  file.symlink:
+    - target: {{ accumulo.alt_config }}
+    - require:
+      - cmd: move-accumulo-dist-conf
+
+accumulo-conf-link:
+  alternatives.install:
+    - link: {{ accumulo.alt_config }}
+    - path: {{ accumulo.real_config }}
+    - priority: 30
+    - require:
+      - file.directory: {{ accumulo.real_config }}
+

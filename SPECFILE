@@ -1,10 +1,23 @@
+##
+# Dependencies:
+#
+# cdh4-formula: https://github.com/stackdio-formulas/cdh4-formula
+#   - cdh4.hadoop.namenode
+#   - cdh4.hadoop.datanode
+# jdk6-formula: https://github.com/stackdio-formulas/jdk6-formula
+#   - jdk6
+##
+
 title: Accumulo Salt Formula
 description: Salt formula for installing components of Accumulo
 root_path: accumulo
 components:
   - title: Accumulo Master
-    description: Accumulo Server
-    sls_path: accumulo.server
+    description: Accumulo Master (gc, master, monitor, tracer)
+    sls_path: accumulo.master
+  - title: Accumulo Tablet Server
+    description: Accumulo Table Server (tserver)
+    sls_path: accumulo.tablet_server
 pillar_defaults:
   accumulo:
     version: 1.5.0
@@ -13,8 +26,20 @@ pillar_defaults:
     sources:
       source: http://www.us.apache.org/dist/accumulo/1.5.0/accumulo-1.5.0-src.tar.gz
       source_hash: sha1=c2bacfd8abeb60d50d87820a4b9fabed92078370
-
+    secret: secretpassword
     config:
+      hadoop:
+        prefix: /usr/lib/hadoop
+        config: /etc/hadoop/conf
+        major_version: '2'
+        classpaths:
+          - /usr/lib/hadoop/lib/.*.jar
+          - /usr/lib/hadoop/client-0.20/.*.jar
+          - /usr/lib/hadoop-0.20-mapreduce/.*.jar
+          - /usr/lib/hadoop-0.20-mapreduce/lib/.*.jar
+          - /usr/lib/hadoop-hdfs/lib/.*.jar
+      accumulo-env:
+        java_home: /usr/java/jre1.6.0_34
       accumulo-site:
         trace.user:
           value: root
