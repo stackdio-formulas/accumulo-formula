@@ -55,4 +55,4 @@ init-accumulo:
 start-all:
   cmd.run:
     - user: accumulo
-    - name: {{accumulo.prefix}}/bin/start-all.sh
+    - name: {{accumulo.prefix}}/bin/start-here.sh
