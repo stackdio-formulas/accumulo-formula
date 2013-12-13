@@ -28,6 +28,11 @@ pillar_defaults:
       source_hash: sha1=c2bacfd8abeb60d50d87820a4b9fabed92078370
     secret: secretpassword
     config:
+      ssh:
+        private_key: |
+          PLEASE_PROVIDE_PRIVATE_KEY
+        public_key: |
+          PLEASE_PROVIDE_PUBLIC_KEY
       hadoop:
         prefix: /usr/lib/hadoop
         config: /etc/hadoop/conf

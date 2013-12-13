@@ -42,6 +42,9 @@
 {%- set accumulo_master = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.master', 'grains.get', 'fqdn', 'compound').values()|first() %}
 {%- set accumulo_slaves = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.tablet_server', 'grains.get', 'fqdn', 'compound').values() %}
 
+{%- set accumulo_private_key = salt['pillar.get']('accumulo:config:ssh:private_key', 'NO_PRIVATE_KEY_PROVIDED') %}
+{%- set accumulo_public_key = salt['pillar.get']('accumulo:config:ssh:public_key', 'NO_PUBLIC_KEY_PROVIDED') %}
+
 {%- set accumulo = {} %}
 {%- do accumulo.update( { 'uid': uid,
                           'version' : version,
@@ -70,5 +73,7 @@
                           'accumulo_slaves' : accumulo_slaves,
                           'accumulo_loglevel' : accumulo_loglevel,
                           'accumulo_default_profile' : accumulo_default_profile,
-                          'accumulo_profile' : accumulo_profile
+                          'accumulo_profile' : accumulo_profile,
+                          'accumulo_private_key' : accumulo_private_key,
+                          'accumulo_public_key' : accumulo_public_key
                         }) %}

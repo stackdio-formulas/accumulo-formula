@@ -34,32 +34,33 @@ accumulo:
       - user: accumulo
       - group: accumulo
 
-#accumulo_private_key:
-#  file.managed:
-#    - name: {{ accumulo.userhome }}/.ssh/id_dsa
-#    - user: accumulo
-#    - group: accumulo
-#    - mode: 600
-#    - source: salt://accumulo/files/dsa-accumulo
-#    - require:
-#      - file.directory: {{ accumulo.userhome }}/.ssh
+accumulo_private_key:
+  file.managed:
+    - name: {{ accumulo.userhome }}/.ssh/id_dsa
+    - user: accumulo
+    - group: accumulo
+    - mode: 600
+    - contents: |
+        {{ accumulo.accumulo_private_key | indent(8) }}
+    - require:
+      - file.directory: {{ accumulo.userhome }}/.ssh
 
-#accumulo_public_key:
-#  file.managed:
-#    - name: {{ accumulo.userhome }}/.ssh/id_dsa.pub
-#    - user: accumulo
-#    - group: accumulo
-#    - mode: 644
-#    - source: salt://accumulo/files/dsa-accumulo.pub
-#    - require:
-#      - file.managed: accumulo_private_key
+accumulo_public_key:
+  file.managed:
+    - name: {{ accumulo.userhome }}/.ssh/id_dsa.pub
+    - user: accumulo
+    - group: accumulo
+    - mode: 644
+    - contents: {{ accumulo.accumulo_public_key }}
+    - require:
+      - file.managed: accumulo_private_key
 
-#ssh_dss_accumulo:
-#  ssh_auth.present:
-#    - user: accumulo
-#    - source: salt://accumulo/files/dsa-accumulo.pub
-#    - require:
-#      - file.managed: accumulo_private_key
+ssh_dss_accumulo:
+  ssh_auth.present:
+    - user: accumulo
+    - name: {{ accumulo.accumulo_public_key }}
+    - require:
+      - file.managed: accumulo_private_key
 
 {{ accumulo.userhome }}/.ssh/config:
   file.managed:
