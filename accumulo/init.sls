@@ -34,6 +34,7 @@ accumulo:
       - user: accumulo
       - group: accumulo
 
+{%- if accumulo.accumulo_private_key and accumulo.accumulo_public_key %}
 accumulo_private_key:
   file.managed:
     - name: {{ accumulo.userhome }}/.ssh/id_dsa
@@ -61,6 +62,7 @@ ssh_dss_accumulo:
     - name: {{ accumulo.accumulo_public_key }}
     - require:
       - file.managed: accumulo_private_key
+{%- endif %}
 
 {{ accumulo.userhome }}/.ssh/config:
   file.managed:

@@ -29,10 +29,8 @@ pillar_defaults:
     secret: secretpassword
     config:
       ssh:
-        private_key: |
-          PLEASE_PROVIDE_PRIVATE_KEY
-        public_key: |
-          PLEASE_PROVIDE_PUBLIC_KEY
+        private_key: null
+        public_key: null
       hadoop:
         prefix: /usr/lib/hadoop
         config: /etc/hadoop/conf
