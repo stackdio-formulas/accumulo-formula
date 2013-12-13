@@ -39,8 +39,8 @@
 # TODO:
 {%- set namenode_host = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:cdh4.hadoop.namenode', 'grains.get', 'fqdn', 'compound').values()|first() %}
 {%- set zookeeper_host = namenode_host %}
-{%- set accumulo_master = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.server', 'grains.get', 'fqdn', 'compound').values()|first() %}
-{%- set accumulo_slaves = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.slave', 'grains.get', 'fqdn', 'compound').values() %}
+{%- set accumulo_master = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.master', 'grains.get', 'fqdn', 'compound').values()|first() %}
+{%- set accumulo_slaves = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.tablet_server', 'grains.get', 'fqdn', 'compound').values() %}
 
 {%- set accumulo = {} %}
 {%- do accumulo.update( { 'uid': uid,
