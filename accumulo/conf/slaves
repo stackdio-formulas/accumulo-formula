@@ -1,1 +1,3 @@
-{{ accumulo_slaves|join('\n') }}
+{% for slave_items in accumulo_slaves %}
+{{ slave_items['fqdn'] }}
+{% endfor %}

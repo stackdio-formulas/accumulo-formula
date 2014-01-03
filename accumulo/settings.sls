@@ -37,10 +37,10 @@
 {%- set accumulo_profile_dict = salt['pillar.get']('accumulo:config:accumulo-site-profiles:' + accumulo_profile, None) %}
 
 # TODO:
-{%- set namenode_host = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:cdh4.hadoop.namenode', 'grains.get', 'fqdn', 'compound').values()|first() %}
+{%- set namenode_host = salt['mine.get']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:cdh4.hadoop.namenode', 'grains.items', 'compound').values()[0]['fqdn'] %}
 {%- set zookeeper_host = namenode_host %}
-{%- set accumulo_master = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.master', 'grains.get', 'fqdn', 'compound').values()|first() %}
-{%- set accumulo_slaves = salt['publish.publish']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.tablet_server', 'grains.get', 'fqdn', 'compound').values() %}
+{%- set accumulo_master = salt['mine.get']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.master', 'grains.items', 'compound').values()[0]['fqdn'] %}
+{%- set accumulo_slaves = salt['mine.get']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.tablet_server', 'grains.items', 'compound').values() %}
 
 {%- set accumulo_private_key = salt['pillar.get']('accumulo:config:ssh:private_key', 'NO_PRIVATE_KEY_PROVIDED') %}
 {%- set accumulo_public_key = salt['pillar.get']('accumulo:config:ssh:public_key', 'NO_PUBLIC_KEY_PROVIDED') %}
