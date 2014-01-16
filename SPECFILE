@@ -42,7 +42,7 @@ pillar_defaults:
           - /usr/lib/hadoop-0.20-mapreduce/lib/.*.jar
           - /usr/lib/hadoop-hdfs/lib/.*.jar
       accumulo-env:
-        java_home: /usr/java/jre1.6.0_34
+        java_home: /usr/java/latest
       accumulo-site:
         trace.user:
           value: root
