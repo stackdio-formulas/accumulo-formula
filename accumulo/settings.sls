@@ -37,7 +37,7 @@
 {%- set accumulo_profile_dict = salt['pillar.get']('accumulo:config:accumulo-site-profiles:' + accumulo_profile, None) %}
 
 # TODO:
-{%- set namenode_role = salt['pillar.get']]('accumulo:config:hadoop:namenode_role', 'cdh4.hadoop.namenode') %}
+{%- set namenode_role = salt['pillar.get']('accumulo:config:hadoop:namenode_role', 'cdh4.hadoop.namenode') %}
 {%- set namenode_host = salt['mine.get']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:' ~ namenode_role, 'grains.items', 'compound').values()[0]['fqdn'] %}
 {%- set zookeeper_host = namenode_host %}
 {%- set accumulo_master = salt['mine.get']('G@stack_id:' ~ grains.stack_id ~ ' and G@roles:accumulo.master', 'grains.items', 'compound').values()[0]['fqdn'] %}
