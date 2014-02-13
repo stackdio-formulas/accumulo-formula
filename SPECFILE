@@ -35,6 +35,7 @@ pillar_defaults:
         prefix: /usr/lib/hadoop
         config: /etc/hadoop/conf
         major_version: '2'
+        namenode_role: cdh4.hadoop.namenode
         classpaths:
           - /usr/lib/hadoop/lib/.*.jar
           - /usr/lib/hadoop/client-0.20/.*.jar
