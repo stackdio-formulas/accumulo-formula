@@ -44,7 +44,7 @@ accumulo_private_key:
     - contents: |
         {{ accumulo.accumulo_private_key | indent(8) }}
     - require:
-      - file.directory: {{ accumulo.userhome }}/.ssh
+      - file: {{ accumulo.userhome }}/.ssh
 
 accumulo_public_key:
   file.managed:
@@ -54,14 +54,14 @@ accumulo_public_key:
     - mode: 644
     - contents: {{ accumulo.accumulo_public_key }}
     - require:
-      - file.managed: accumulo_private_key
+      - file: accumulo_private_key
 
 ssh_dss_accumulo:
   ssh_auth.present:
     - user: accumulo
     - name: {{ accumulo.accumulo_public_key }}
     - require:
-      - file.managed: accumulo_private_key
+      - file: accumulo_private_key
 {%- endif %}
 
 {{ accumulo.userhome }}/.ssh/config:
@@ -71,7 +71,7 @@ ssh_dss_accumulo:
     - group: accumulo
     - mode: 644
     - require:
-      - file.directory: {{ accumulo.userhome }}/.ssh
+      - file: {{ accumulo.userhome }}/.ssh
 
 {{ accumulo.userhome }}/.bashrc:
   file.append:
@@ -92,7 +92,7 @@ accumulo-home-link:
     - path: {{ accumulo.real_home }}
     - priority: 30
     - require:
-      - cmd.run: install-accumulo-dist
+      - cmd: install-accumulo-dist
 
 {{ accumulo.real_home }}:
   file.directory:
@@ -140,8 +140,8 @@ move-accumulo-dist-conf:
     - unless: test -L {{ accumulo.real_config_src }}
     - onlyif: test -d {{ accumulo.real_config_src }}
     - require:
-      - file.directory: {{ accumulo.real_home }}
-      - file.directory: /etc/accumulo
+      - file: {{ accumulo.real_home }}
+      - file: /etc/accumulo
 
 {{ accumulo.real_config_src }}:
   file.symlink:
@@ -155,5 +155,4 @@ accumulo-conf-link:
     - path: {{ accumulo.real_config }}
     - priority: 30
     - require:
-      - file.directory: {{ accumulo.real_config }}
-
+      - file: {{ accumulo.real_config }}
