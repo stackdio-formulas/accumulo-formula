@@ -80,7 +80,7 @@ ssh_dss_accumulo:
 
 install-accumulo-dist:
   cmd.run:
-    - name: curl '{{ accumulo.source_url }}' | tar xz
+    - name: curl -L '{{ accumulo.source_url }}' | tar xz
     - user: root
     - group: root
     - cwd: /usr/lib
